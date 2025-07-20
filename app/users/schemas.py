@@ -1,22 +1,36 @@
 import re
 from typing import Optional
-from app.users.sql_enums import GenderEnum
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from app.users.sql_enums import JobType
+from pydantic import BaseModel, Field, field_validator
 
 
 class SUser(BaseModel):
-    email: Optional[EmailStr] = Field(None, description="Электронная почта")
-    gender: Optional[GenderEnum]
-    password: Optional[str] = Field(None, min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
-    phone_number: Optional[str] = Field(None, description="Номер телефона в международном формате, начинающийся с '+'")
-    first_name: Optional[str] = Field(None, min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
-    last_name: Optional[str] = Field(None, min_length=3, max_length=50, description="Фамилия, от 3 до 50 символов")
+    Amt: float = Field(..., description="Сумма кредита")
+    Trm: int = Field(..., description="Срок кредита в месяцах")
 
-    @field_validator("phone_number")
+    YngAcntAge: Optional[float] = Field(None, description="Возраст самого молодого счёта")
+    CntActv: Optional[int] = Field(None, description="Количество активных счетов")
+    CntCls12: Optional[int] = Field(None, description="Количество закрытых за последние 12 месяцев")
+    CntOpn12: Optional[int] = Field(None, description="Количество открытых за последние 12 месяцев")
+    CntSttl: Optional[int] = Field(None, description="Количество погашенных счетов")
+    AvgAcntAge: Optional[float] = Field(None, description="Средний возраст счетов")
+
+    OutBal: Optional[float] = Field(None, description="Общая сумма текущих обязательств")
+    OutBalNoMtg: Optional[float] = Field(None, description="Обязательства без ипотеки")
+    WorstPayStat: Optional[int] = Field(None, description="Худший статус платежей по активным счетам")
+
+    EmpPT: Optional[JobType] 
+    EmpRtrd: Optional[int] = Field(None, description="На пенсии (0/1)")
+    EmpSelf: Optional[int] = Field(None, description="Самозанятый (0/1)")
+
+    LoanPurpose: Optional[str] = Field(None, description="Цель кредита")
+
+    @field_validator("Trm")
     @classmethod
-    def validate_phone_number(cls, values: str) -> str:
-        if not re.match(r'^\+\d{5,15}$', values):
-            raise ValueError('Номер телефона должен начинаться с "+" и содержать от 5 до 15 цифр')
-        return values
+    def validate_Trm(cls, value: int) -> int:
+        if value < 3:
+            raise ValueError('Срок кредита не может быть меньше 3 месяцев')
+        return value
+
 
 

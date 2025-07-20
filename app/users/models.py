@@ -1,27 +1,35 @@
-from sqlalchemy import text, String
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.database import Base, str_uniq, int_pk
-from app.diagnosiss.models import Diagnosis
-from app.users.sql_enums import GenderEnum
+from sqlalchemy import Float, String, Integer
+from sqlalchemy.orm import Mapped, mapped_column
+from app.database import Base, int_pk
+from app.users.sql_enums import JobType
 
 
 class User(Base):
-    id: Mapped[int_pk]
-    first_name: Mapped[str] = mapped_column(String, nullable=False)
-    phone_number: Mapped[str_uniq]
-    last_name: Mapped[str | None]
-    age: Mapped[int | None]
-    gender: Mapped[GenderEnum]
-    email: Mapped[str_uniq]
-    password: Mapped[str]
+    id: Mapped[int_pk] 
+
+    Amt: Mapped[float] = mapped_column(Float)
+    Trm: Mapped[int] = mapped_column(Integer)
+
+    YngAcntAge: Mapped[float] = mapped_column(Float, nullable=True)
+    CntActv: Mapped[int] = mapped_column(Integer, nullable=True)
+    CntCls12: Mapped[int] = mapped_column(Integer, nullable=True)
+    CntOpn12: Mapped[int] = mapped_column(Integer, nullable=True)
+    CntSttl: Mapped[int] = mapped_column(Integer, nullable=True)
+    AvgAcntAge: Mapped[float] = mapped_column(Float, nullable=True)
+
+    OutBal: Mapped[float] = mapped_column(Float, nullable=True)
+    OutBalNoMtg: Mapped[float] = mapped_column(Float, nullable=True)
+    WorstPayStat: Mapped[int] = mapped_column(Integer, nullable=True)
+
+    EmpPT: Mapped[JobType] 
+    EmpRtrd: Mapped[int] = mapped_column(Integer, nullable=True)
+    EmpSelf: Mapped[int] = mapped_column(Integer, nullable=True)
+    LoanPurpose: Mapped[str] = mapped_column(String, nullable=False)
 
     extend_existing = True
 
-    diagnosis: Mapped[list["Diagnosis"]] = relationship(
-        "Diagnosis", back_populates="user")
-
     def __str__(self):
-        return f"{self.__class__.__name__}(id={self.id}, first_name={self.first_name!r}, last_name={self.last_name!r})"
+        return f"{self.__class__.__name__}(id={self.id}, Amt={self.Amt})"
 
     def __repr__(self):
         return str(self)
@@ -30,11 +38,19 @@ class User(Base):
     def to_dict(self):
         return {
             "id": self.id,
-            "phone_number": self.phone_number,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "age": self.age,
-            "gender": self.gender,
-            "email": self.email,
-            "password": self.password  
+            "Amt": self.Amt,
+            "Trm": self.Trm,
+            "YngAcntAge": self.YngAcntAge,
+            "CntActv": self.CntActv,
+            "CntCls12": self.CntCls12,
+            "CntOpn12": self.CntOpn12,
+            "CntSttl": self.CntSttl,
+            "AvgAcntAge": self.AvgAcntAge,
+            "OutBal": self.OutBal,
+            "OutBalNoMtg": self.OutBalNoMtg,
+            "WorstPayStat": self.WorstPayStat,
+            "EmpPT": self.EmpPT,
+            "EmpRtrd": self.EmpRtrd,
+            "EmpSelf": self.EmpSelf,
+            "LoanPurpose": self.LoanPurpose
         }

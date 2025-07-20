@@ -1,36 +1,65 @@
-from app.users.sql_enums import GenderEnum
+from app.users.sql_enums import JobType
 
 class RBUser:
     def __init__(
         self,
         id: int | None = None,
-        first_name: str | None = None,
-        phone_number: str | None = None,
-        last_name: str | None = None,
-        age: int | None = None,
-        gender: GenderEnum | None = None,
-        email: str | None = None,
-        password: str | None = None,
+        Amt: float | None = None,
+        Trm: int | None = None,
+        Suc: int | None = None,
+        YngAcntAge: float | None = None,
+        CntActv: int | None = None,
+        CntCls12: int | None = None,
+        CntOpn12: int | None = None,
+        CntSttl: int | None = None,
+        AvgAcntAge: float | None = None,
+        OutBal: float | None = None,
+        OutBalNoMtg: float | None = None,
+        WorstPayStat: int | None = None,
+        EmpPT: JobType | None = None,
+        EmpRtrd: int | None = None,
+        EmpSelf: int | None = None,
+        LoanPurpose: str | None = None,
     ):
         self.id = id
-        self.first_name = first_name
-        self.phone_number = phone_number
-        self.last_name = last_name
-        self.age = age
-        self.gender = gender
-        self.email = email
-        self.password = password
+        self.Amt = Amt
+        self.Trm = Trm
+        self.Suc = Suc
+        self.YngAcntAge = YngAcntAge
+        self.CntActv = CntActv
+        self.CntCls12 = CntCls12
+        self.CntOpn12 = CntOpn12
+        self.CntSttl = CntSttl
+        self.AvgAcntAge = AvgAcntAge
+        self.OutBal = OutBal
+        self.OutBalNoMtg = OutBalNoMtg
+        self.WorstPayStat = WorstPayStat
+        self.EmpPT = EmpPT
+        self.EmpRtrd = EmpRtrd
+        self.EmpSelf = EmpSelf
+        self.LoanPurpose = LoanPurpose
 
     def to_dict(self) -> dict:
         return {
-            key: value for key, value in {
+            key: value
+            for key, value in {
                 "id": self.id,
-                "first_name": self.first_name,
-                "phone_number": self.phone_number,
-                "last_name": self.last_name,
-                "age": self.age,
-                "gender": self.gender,
-                "email": self.email,
-                "password": self.password
-            }.items() if value is not None
+                "Amt": self.Amt,
+                "Trm": self.Trm,
+                "Suc": self.Suc,
+                "YngAcntAge": self.YngAcntAge,
+                "CntActv": self.CntActv,
+                "CntCls12": self.CntCls12,
+                "CntOpn12": self.CntOpn12,
+                "CntSttl": self.CntSttl,
+                "AvgAcntAge": self.AvgAcntAge,
+                "OutBal": self.OutBal,
+                "OutBalNoMtg": self.OutBalNoMtg,
+                "WorstPayStat": self.WorstPayStat,
+                "EmpPT": self.EmpPT,
+                "EmpRtrd": self.EmpRtrd,
+                "EmpSelf": self.EmpSelf,
+                "LoanPurpose": self.LoanPurpose,
+            }.items()
+            if value is not None
         }

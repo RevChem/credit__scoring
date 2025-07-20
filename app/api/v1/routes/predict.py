@@ -4,8 +4,8 @@ import joblib
 import json
 from fuzzywuzzy import process
 from fastapi import APIRouter
-from pydantic import BaseModel
-from typing import Optional
+from app.users.schemas import SUser
+from app.users.sql_enums import JobType
 
 
 router = APIRouter(prefix="/predict", tags=["Предсказание для одного клиента"])
@@ -31,42 +31,21 @@ def match_loan_purpose(client_input: str, threshold=80):
     matched, score = process.extractOne(client_input.strip().lower(), loan_purposes)
     return matched if score >= threshold else None
 
-class ClientData(BaseModel):
-    Age: int
-    Amount: float
-    Term: int
-    Success: int  # или Optional[int], если может быть null
 
-    # Возраст самого молодого аккаунта
-    ALL_AgeOfYoungestAccount: Optional[float] = None
-
-    # Счетчики активности
-    ALL_CountActive: Optional[int] = None
-    ALL_CountClosedLast12Months: Optional[int] = None
-    ALL_CountOpenedLast12Months: Optional[int] = None
-    ALL_CountSettled: Optional[int] = None
-
-    # Средний возраст аккаунтов
-    ALL_MeanAccountAge: Optional[float] = None
-
-    # Финансовые показатели
-    ALL_SumCurrentOutstandingBal: Optional[float] = None
-    ALL_SumCurrentOutstandingBalExcMtg: Optional[float] = None
-
-    # Худший статус платежа
-    ALL_WorstPaymentStatusActiveAccounts: Optional[int] = None
-
-    # Категориальные признаки (будут обработаны как one-hot)
-    EmploymentType: str
-    LoanPurpose: str
-
-
-# Эндпоинт
 @router.post("/predict")
-def predict(data: ClientData):
+def predict(data: SUser):
     try:
-        # Преобразуем в DataFrame
         df = pd.DataFrame([data.dict()])
+
+        JOB_TYPE_MAP = {
+            "Employed - full time": JobType.FULL_TIME,
+            "Employed - part time": JobType.PART_TIME,
+            "Self employed": JobType.SELF_EMPLOYED,
+            "Retired": JobType.RETIRED
+        }
+
+        df['EmpPT'] = df['EmpPT'].map(JOB_TYPE_MAP)
+
 
         # 1. Обработка LoanPurpose
         df['LoanPurpose'] = df['LoanPurpose'].apply(match_loan_purpose)
@@ -94,3 +73,12 @@ def predict(data: ClientData):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ошибка при обработке: {str(e)}")
+    
+
+
+
+
+
+
+
+
