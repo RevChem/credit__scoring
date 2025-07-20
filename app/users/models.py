@@ -1,7 +1,7 @@
 from sqlalchemy import Float, String, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base, int_pk
-from app.users.sql_enums import JobType
+from app.users.sql_enums import JobType, Risk_Category
 
 
 class User(Base):
@@ -25,6 +25,9 @@ class User(Base):
     EmpRtrd: Mapped[int] = mapped_column(Integer, nullable=True)
     EmpSelf: Mapped[int] = mapped_column(Integer, nullable=True)
     LoanPurpose: Mapped[str] = mapped_column(String, nullable=False)
+
+    Probability: Mapped[float] = mapped_column(Float, nullable=True)
+    Risk_Category: Mapped[Risk_Category] 
 
     extend_existing = True
 
@@ -52,5 +55,7 @@ class User(Base):
             "EmpPT": self.EmpPT,
             "EmpRtrd": self.EmpRtrd,
             "EmpSelf": self.EmpSelf,
-            "LoanPurpose": self.LoanPurpose
+            "LoanPurpose": self.LoanPurpose, 
+            "Probability": self.Probability,
+            "Risk_Category": self.Risk_Category
         }
