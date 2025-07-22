@@ -1,14 +1,13 @@
-import pandas as pd
 import logging
 import logging.config
 import yaml
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
+import pandas as pd
+from fuzzywuzzy import fuzz, process
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import RobustScaler
 
 
-with open('../config/logging_config.yaml', 'r') as f:
+with open('app/config/logging_config.yaml', 'r') as f:
     config = yaml.safe_load(f.read())
 logging.config.dictConfig(config)
 logger = logging.getLogger('services')
@@ -43,33 +42,44 @@ def quantile95(df):
 
 
 def categorical_processing(df1, df2):
-
     logger.info("Starting data preprocessing")
     df = merge_datasets(df1, df2)
+
     df.drop(['UID', 'ALL_TimeSinceMostRecentDefault', 'ALL_AgeOfOldestAccount',
              'ApplicationDate', 'ALL_Count', 'ALL_CountDefaultAccounts'], axis=1, inplace=True)
-    
-    df['LoanPurpose'] = df['LoanPurpose'].str.lower()
-    df=uniq_categorical(df, 'LoanPurpose')
 
-    # Из-за этой части возникает необходимость в переобучении
+    df['LoanPurpose'] = df['LoanPurpose'].str.lower()
+    df = uniq_categorical(df, 'LoanPurpose')
+
     value_counts = df['LoanPurpose'].value_counts()
     common = value_counts[value_counts >= 15].index
     df['LoanPurpose'] = df['LoanPurpose'].apply(lambda x: x if x in common else 'other')
 
     cat_cols = df.select_dtypes(include=['object', 'category']).columns.tolist()
-    num_cols = df.select_dtypes(include=['int64', 'float64']).drop('Success', axis=1).columns.tolist()
 
     df = pd.get_dummies(df, columns=cat_cols, drop_first=True).astype(int)
-    logger.info(f"num cols: {df.shape}")
+    logger.info(f"Final dataset shape: {df.shape}")
 
+    return df
+
+
+def split_data(df, test_size=0.2):
     X = df.drop('Success', axis=1)
     y = df['Success']
 
-    scaler = RobustScaler()
-    X[num_cols] = scaler.fit_transform(X[num_cols])
-
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, stratify=y)
+        X, y, test_size=test_size, stratify=y, random_state=42
+    )
 
-    return X_train, X_test, y_train, y_test
+    scaler = RobustScaler()
+    num_cols = X_train.select_dtypes(include=['int64', 'float64']).columns.tolist()
+    X_train[num_cols] = scaler.fit_transform(X_train[num_cols])
+    X_test[num_cols] = scaler.transform(X_test[num_cols])
+
+    train = X_train.copy()
+    train['Success'] = y_train
+
+    test = X_test.copy()
+    test['Success'] = y_test
+
+    return X, y

@@ -17,7 +17,7 @@ async def find_all() -> list[SUser]:
     return await UserDAO.find_all()
 
 
-@router.post("/add/")
+@router.post("/add/", summary="Добавить одного пользователя")
 async def add_user(user: SUser) -> dict:
     user = await UserDAO.add(**user.dict())
     if user:
@@ -26,7 +26,7 @@ async def add_user(user: SUser) -> dict:
         return {"message": "Ошибка при добавлении пользователя!"}
 
 
-@router.delete("/dell/{id}")
+@router.delete("/dell/{id}", summary="Удалить одного пользователя")
 async def delete(id: int) -> dict:
     check = await UserDAO.delete(id=id)
     if check:

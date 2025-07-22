@@ -4,10 +4,9 @@ from evidently.metric_preset import (DataDriftPreset,
 from evidently import ColumnMapping
 import pandas as pd
 
-# Определяем column_mapping с указанием целевого и предсказанного столбцов
 column_mapping = ColumnMapping(
 target='Success',
-    prediction='Success'  # название столбца с предсказаниями в твоих данных
+    prediction='Success'  
 )
 
 def detect_drift(
@@ -17,16 +16,15 @@ def detect_drift(
     top_n: int = 30,
 ):
     report = Report(metrics=[
-        DataDriftPreset(),     # дрейф признаков
-        TargetDriftPreset(),   # дрейф целевой переменной
-        ClassificationPreset() # метрики классификации
+        DataDriftPreset(),     
+        TargetDriftPreset(),  
+        ClassificationPreset()
     ])
     report.run(reference_data=reference, current_data=current, column_mapping=column_mapping)
     report_dict = report.as_dict()
 
     drift_results = {}
 
-    # Дрейф признаков
     data_drift = report_dict["metrics"][0]["result"]
     feature_drift_scores = {}
     for feature in data_drift.get("features", {}):
@@ -35,13 +33,11 @@ def detect_drift(
             feature_drift_scores[feature] = score
     drift_results["feature_drift"] = dict(sorted(feature_drift_scores.items(), key=lambda x: x[1], reverse=True)[:top_n])
 
-    # Дрейф целевой переменной
     target_drift = report_dict["metrics"][1]["result"]
     target_drift_score = target_drift.get("drift_score", 0)
     drift_results["target_drift_score"] = target_drift_score
     drift_results["target_drift_detected"] = target_drift_score > threshold
 
-    # Метрики качества классификации
     classification_metrics = report_dict["metrics"][2]["result"]
     drift_results["classification_metrics_reference"] = classification_metrics.get("performance", {}).get("reference", {})
     drift_results["classification_metrics_current"] = classification_metrics.get("performance", {}).get("current", {})
