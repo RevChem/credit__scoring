@@ -6,6 +6,7 @@
 
 ### Структура проекта
 
+```
 credit_scoring/
 ├── app/
 │   ├── api/
@@ -79,3 +80,4 @@ credit_scoring/
 ├── .gitignore
 ├── requirements.txt
 └── README.md
+```
