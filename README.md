@@ -25,7 +25,7 @@ credit_scoring/
 │   │   └── __init__.py
 │   │
 │   ├── users/
-│   │   ├── models.py                   # ORM-модель пользователя
+│   │   ├── models.py                   # ORM-модель 
 │   │   ├── schemas.py                  # Pydantic-схемы
 │   │   ├── dao.py                      # Доступ к данным
 │   │   ├── router.py                   # Роуты пользователей
@@ -44,7 +44,7 @@ credit_scoring/
 │   ├── dataset_columns.json            # Структура данных
 │   └── loan_purposes.json              # Цели кредита
 │
-├── data_modified/                      # Обработанные данные (опционально)
+├── data_modified/                      # Обработанные данные
 │   ├── original.csv
 │   └── modified (2).csv
 │
@@ -52,7 +52,7 @@ credit_scoring/
 │   ├── xgboost/
 │   │   └── latest.pkl                  # Обученная модель XGBoost
 │   └── tab_transformer/
-│       └── latest.pth                  # Модель-заглушка (можно расширить)
+│       └── latest.pth                  # Обученная модель tab_transformer
 │
 ├── notebooks/
 │   └── Кредитный_скоринг.ipynb        # Jupyter-ноутбук с анализом
@@ -61,10 +61,10 @@ credit_scoring/
 │   ├── env.py
 │   ├── script.py.mako
 │   └── versions/
-│       └── *.py                        # Файлы миграций
+│       └── *.py                        
 │
 ├── mlruns/                             # Эксперименты MLflow
-│   └── [run_id]/...                    # Автогенерируемые данные
+│   └── [run_id]/...                   
 │
 ├── mlartifacts/                        # Артефакты MLflow (модели, графики)
 │   └── [model]/artifacts/
