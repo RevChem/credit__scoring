@@ -1,4 +1,3 @@
-# uvicorn app.api.v1.main:app --reload
 import os
 import logging
 import logging.config
@@ -17,7 +16,7 @@ app = FastAPI(
 
 @app.get("/")
 def home_page():
-    return {"message": "Привет!"}
+    return ""
 
 
 app.include_router(router_users)
@@ -32,4 +31,4 @@ with open(config_path, "r") as f:
     logging.config.dictConfig(config)
 
 logger = logging.getLogger(__name__)
-logger.info("Логирование запущено!")
+
